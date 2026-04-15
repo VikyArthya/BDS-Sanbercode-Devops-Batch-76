@@ -1,0 +1,26 @@
+1. Tidak Ada Pengecekan Sumber (syslog.txt)
+
+Kelemahan: Script akan tetap berjalan meskipun file syslog.txt tidak ada. Perintah cp akan mengeluarkan pesan error ke terminal, tapi script akan lanjut mencetak "Backup selesai!". Ini bisa menipu sistem monitoring.
+
+    Solusi: Tambahkan pengecekan if [ -f "syslog.txt" ].
+
+2. Penggunaan Path Relatif
+
+Kelemahan: Script ini sangat bergantung pada di mana posisi kamu berada saat menjalankannya (working directory). Jika kamu menjalankan script dari luar folder Tugas-3, script akan mencari syslog.txt di lokasi yang salah dan kemungkinan besar gagal.
+
+    Solusi: Definisikan path secara absolut atau gunakan variabel untuk direktori.
+
+3. Risiko Penimpaan File (Overwriting)
+
+Kelemahan: Setiap kali script dijalankan, file di dalam backup-log/syslog.txt akan langsung ditimpa oleh versi terbaru. Dalam dunia nyata, backup biasanya menggunakan timestamp agar kita punya riwayat log dari waktu ke waktu.
+
+    Solusi: Tambahkan variabel tanggal pada nama file backup.
+
+4. Tidak Memanfaatkan Exit Codes
+
+Kelemahan: Script tidak memberitahu sistem apakah prosesnya benar-benar sukses atau gagal. Dalam otomasi (seperti Jenkins atau GitHub Actions), kita ingin script berhenti dan mengirim sinyal error jika mkdir atau cp gagal.
+
+    Solusi: Gunakan set -e atau cek status $?.
+
+
+Untuk pendapat saya sendiri, saya setuju dengan review AI tersebut bahwa di backup.sh tersebut tidak ada error handling sama sekali. dan untuk history di log juga akan tertimpa terus, jadi log yg lama akan hilang terus saat generate log baru
