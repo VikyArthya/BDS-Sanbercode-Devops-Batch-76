@@ -1,0 +1,29 @@
+name: Generate Artifact
+
+on:
+  push:
+    branches:
+      - main # Sesuaikan dengan branch repositori kalian
+
+jobs:
+  build-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Simulasi Proses Build (Di dunia nyata ini berisi perintah spt npm run build)
+      - name: Jalankan Proses Build
+        run: |
+          echo "Memulai proses kompilasi di mesin Cloud..."
+          mkdir dist
+          echo "<h1>Sukses! Ini adalah hasil build (Artifact) dari mesin CI/CD</h1>" > dist/index.html
+          echo "Proses Build selesai, sampah dapur telah dibuang!"
+
+      # Menyimpan folder 'dist' menjadi paket Artifact
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hasil-build-web
+          path: dist/
+          retention-days: 7 # Otomatis dihapus setelah 7 hari agar kuota GitHub aman
