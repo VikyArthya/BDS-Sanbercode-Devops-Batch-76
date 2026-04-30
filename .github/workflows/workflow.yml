@@ -1,0 +1,22 @@
+name: GitHub Actions Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Test-Pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Print Pipeline Message
+        run: echo 'Pipeline Berjalan!'
+
+      - name: Print Secret Key
+        run: |
+          # GitHub Actions secara otomatis akan me-masking nilai secret (menjadi ***)
+          echo "Secret Key: ${{ secrets.MY_SECRET_KEY }}"
