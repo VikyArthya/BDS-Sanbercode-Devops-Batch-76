@@ -1,0 +1,57 @@
+name: Build and Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-app:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create dist folder and index.html
+        run: |
+          mkdir -p dist
+          echo 'Ini adalah hasil build otomatis Artifact' > dist/index.html
+          
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hasil-build-web
+          path: dist
+          retention-days: 7
+
+  deploy-to-vps:
+    needs: build-app # Menunggu job build-app selesai
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: hasil-build-web
+          path: dist
+
+      - name: Transfer dist folder via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "dist/*"
+          target: "/var/www/html" # Sesuaikan dengan folder target web server di VPS Anda
+          strip_components: 1
+
+      - name: Execute SSH commands on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            echo 'Deployment Selesai!'
